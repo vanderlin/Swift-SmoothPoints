@@ -106,9 +106,7 @@ class SmoothDrawingView: UIView {
     
     func updatePath() {
         guard points.count > 3 else { return }
-        
-        //smoothedPoints = catmullRomPath(points: points)
-        
+       
         simplePoints = Simplify.simplify(points, tolerance: tolerance)
         
         var resampled:[CGPoint] = []
@@ -123,33 +121,6 @@ class SmoothDrawingView: UIView {
         }
         
         smoothedPoints = resampled
-        /*
-        if simplePoints.count >= 3 {
-            let n = simplePoints.count
-            let steps = 10
-            var resampled:[CGPoint] = []
-            
-            
-            for i in 0..<(n - 3) {
-                
-                let p0 = simplePoints[i]
-                let p1 = simplePoints[i + 1]
-                let p2 = simplePoints[i + 2]
-                let p3 = simplePoints[i + 3]
-                
-                for j in 0...steps {
-                    
-                    let t = Float(j) / Float(steps)
-                    
-                    let c = cubic(p0: p0, p1: p1, p2: p2, p3: p3, t: CGFloat(t))
-                    
-                    resampled.append(c)
-                }
-            }
-            smoothedPoints = resampled
-        }
-        */
-        
         setNeedsDisplay()
     }
     
