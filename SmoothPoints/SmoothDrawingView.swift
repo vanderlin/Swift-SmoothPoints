@@ -162,7 +162,6 @@ class SmoothDrawingView: UIView {
         ctx.strokePath()
     }
     func drawDots(ctx:CGContext, points:[CGPoint], radius:CGFloat = 10.0, filled:Bool = true) {
-        guard let firstPoint = points.first else { return }
         let r = radius
         for pt in points {
             ctx.addEllipse(in: CGRect(x: pt.x-r/2, y: pt.y-r/2, width: r, height: r))
