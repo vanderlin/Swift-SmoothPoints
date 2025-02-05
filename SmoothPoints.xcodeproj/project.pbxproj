@@ -13,6 +13,8 @@
 		72D573412D53CF3B0099B33A /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 72D573402D53CF3B0099B33A /* Base */; };
 		72D573432D53CF3C0099B33A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72D573422D53CF3C0099B33A /* Assets.xcassets */; };
 		72D573462D53CF3C0099B33A /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 72D573452D53CF3C0099B33A /* Base */; };
+		72D5734E2D53CF540099B33A /* SmoothDrawingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D5734D2D53CF540099B33A /* SmoothDrawingView.swift */; };
+		72D573502D53D2070099B33A /* SplineHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D5734F2D53D2070099B33A /* SplineHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		72D573422D53CF3C0099B33A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72D573452D53CF3C0099B33A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		72D573472D53CF3C0099B33A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		72D5734D2D53CF540099B33A /* SmoothDrawingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothDrawingView.swift; sourceTree = "<group>"; };
+		72D5734F2D53D2070099B33A /* SplineHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplineHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 				72D573392D53CF3B0099B33A /* AppDelegate.swift */,
 				72D5733B2D53CF3B0099B33A /* SceneDelegate.swift */,
 				72D5733D2D53CF3B0099B33A /* ViewController.swift */,
+				72D5734D2D53CF540099B33A /* SmoothDrawingView.swift */,
+				72D5734F2D53D2070099B33A /* SplineHelper.swift */,
 				72D5733F2D53CF3B0099B33A /* Main.storyboard */,
 				72D573422D53CF3C0099B33A /* Assets.xcassets */,
 				72D573442D53CF3C0099B33A /* LaunchScreen.storyboard */,
@@ -140,7 +146,9 @@
 			files = (
 				72D5733E2D53CF3B0099B33A /* ViewController.swift in Sources */,
 				72D5733A2D53CF3B0099B33A /* AppDelegate.swift in Sources */,
+				72D573502D53D2070099B33A /* SplineHelper.swift in Sources */,
 				72D5733C2D53CF3B0099B33A /* SceneDelegate.swift in Sources */,
+				72D5734E2D53CF540099B33A /* SmoothDrawingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
