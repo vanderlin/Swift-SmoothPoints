@@ -90,6 +90,49 @@ func catmullRom(p0: CGPoint, p1: CGPoint, p2: CGPoint, p3: CGPoint, t: CGFloat) 
     return point
 }
 
+// MARK: - Linear
+func interpolateLinear(p0: CGPoint, p1: CGPoint, t: CGFloat) -> CGPoint {
+    return CGPoint(
+        x: p0.x + (p1.x - p0.x) * t,
+        y: p0.y + (p1.y - p0.y) * t
+    )
+}
+
+func distance(_ p0: CGPoint, _ p1: CGPoint) -> CGFloat {
+    return hypot(p1.x - p0.x, p1.y - p0.y)
+}
+
+func resampleByPixels(points: [CGPoint], spacing: CGFloat) -> [CGPoint] {
+    guard points.count > 1 else { return points }
+
+    var resampledPoints: [CGPoint] = [points.first!] // Start with the first point
+    var accumulatedDistance: CGFloat = 0.0
+
+    for i in 1..<points.count {
+        let p0 = points[i - 1]
+        let p1 = points[i]
+        
+        let segmentLength = distance(p0, p1)
+        
+        if segmentLength + accumulatedDistance >= spacing {
+            var t: CGFloat = (spacing - accumulatedDistance) / segmentLength
+            while t <= 1.0 {
+                let newPoint = interpolateLinear(p0: p0, p1: p1, t: t)
+                resampledPoints.append(newPoint)
+                t += spacing / segmentLength
+            }
+            accumulatedDistance = (segmentLength + accumulatedDistance).truncatingRemainder(dividingBy: spacing)
+        } else {
+            accumulatedDistance += segmentLength
+        }
+    }
+    
+    guard let f = points.last else { return resampledPoints }
+    resampledPoints.append(f)
+
+    return resampledPoints
+}
+
 // MARK: - simplification algorithm.
 class Simplify {
     static func simplifyRadialDistance(_ points: [CGPoint], tolerance: CGFloat) -> [CGPoint] {

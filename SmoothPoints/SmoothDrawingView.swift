@@ -20,12 +20,21 @@ class SmoothDrawingView: UIView {
     private var simplePoints: [CGPoint] = []
     private var smoothedPoints: [CGPoint] = []
     
+    private var displayLink: CADisplayLink?
+    private var startTime: CFTimeInterval = 0
+    private var timef: CGFloat = 0.0
+    
     var interpolationMethod:InterpolationMethod = .linear {
         didSet {
             updatePath()
         }
     }
     var tolerance:CGFloat = 5.0 {
+        didSet {
+            updatePath()
+        }
+    }
+    var resampledSpace:CGFloat = 50.0 {
         didSet {
             updatePath()
         }
@@ -45,9 +54,19 @@ class SmoothDrawingView: UIView {
         setup()
     }
     
-    private func setup() {
+    func setup() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         addGestureRecognizer(panGesture)
+        
+        displayLink?.invalidate() // Ensure no duplicate CADisplayLink instances
+        displayLink = CADisplayLink(target: self, selector: #selector(updateAnimation))
+        displayLink?.add(to: .main, forMode: .default)
+        startTime = CACurrentMediaTime()
+    }
+    
+    @objc private func updateAnimation() {
+        timef = CGFloat(CACurrentMediaTime() - startTime) * 0.5
+        updatePath()
     }
     
     @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
@@ -56,20 +75,22 @@ class SmoothDrawingView: UIView {
         if gesture.state == .began {
             points.removeAll()
         }
-        
+        startTime = CACurrentMediaTime()
         points.append(point)
         updatePath()
-        
     }
     
     func getPointAtPct(pct:Float, points:[CGPoint]) -> CGPoint {
         
+        guard points.count > 3 else { return .zero }
+
+        
         let num:Int = points.count - 1
         
         let indexf = Float(num) * pct
-        let indexi = floor(indexf)
+        let indexi = min(Int(floor(indexf)), num - 1)
         
-        let f = indexf - indexi
+        let f = indexf - Float(indexi)
         
         var p0:CGPoint, p1:CGPoint, p2:CGPoint, p3:CGPoint = .zero
         
@@ -82,17 +103,20 @@ class SmoothDrawingView: UIView {
             p3 = points[(i + 3) % num]
         }
         else {
-            p0 = points[clamp(Int(indexi-1), min: 0, max: num)]
-            p1 = points[Int(indexi)]
-            p2 = points[clamp(Int(indexi+1), min: 0, max: num)]
-            p3 = points[clamp(Int(indexi+2), min: 0, max: num)]
+            
+            let i = indexi
+            p0 = points[clamp(i-1, min: 0, max: num-1)]
+            p1 = points[i]
+            p2 = points[clamp(i+1, min: 0, max: num)]
+            p3 = points[clamp(i+2, min: 0, max: num)]
         }
         
         let t = CGFloat(f)
+       
         
         switch interpolationMethod {
         case .linear:
-            return cubic(p0: p0, p1: p1, p2: p2, p3: p3, t:t)
+            return interpolateLinear(p0: p1, p1: p2, t: t)
         case .cubic:
             return cubic(p0: p0, p1: p1, p2: p2, p3: p3, t: t)
         case .hermite:
@@ -110,7 +134,7 @@ class SmoothDrawingView: UIView {
         simplePoints = Simplify.simplify(points, tolerance: tolerance)
         
         var resampled:[CGPoint] = []
-        let steps = 10 * simplePoints.count
+        let steps = max(10, simplePoints.count * 10)
         for i in 0...steps {
             
             let t = Float(i) / Float(steps)
@@ -120,7 +144,8 @@ class SmoothDrawingView: UIView {
             resampled.append(point)
         }
         
-        smoothedPoints = resampled
+        smoothedPoints = resampleByPixels(points: resampled, spacing: resampledSpace)
+        
         setNeedsDisplay()
     }
     
@@ -132,6 +157,7 @@ class SmoothDrawingView: UIView {
         }
         ctx.strokePath()
     }
+    
     func drawDots(ctx:CGContext, points:[CGPoint], radius:CGFloat = 10.0, filled:Bool = true) {
         let r = radius
         for pt in points {
@@ -139,11 +165,11 @@ class SmoothDrawingView: UIView {
         }
         filled ? ctx.fillPath() : ctx.strokePath()
     }
-    
     override func draw(_ rect: CGRect) {
         
         guard let ctx = UIGraphicsGetCurrentContext() else { return }
         
+        ctx.setLineWidth(1)
         ctx.setStrokeColor(UIColor.black.cgColor)
         drawLine(ctx: ctx, points: points)
         
@@ -151,10 +177,23 @@ class SmoothDrawingView: UIView {
         ctx.setStrokeColor(UIColor.black.cgColor)
         drawDots(ctx: ctx, points: simplePoints, radius: 15, filled: false)
        
+        ctx.setLineWidth(3)
         ctx.setStrokeColor(UIColor.blue.cgColor)
         ctx.setFillColor(UIColor.blue.cgColor)
-        drawDots(ctx: ctx, points: smoothedPoints, radius: 5.0)
+        drawDots(ctx: ctx, points: smoothedPoints, radius: 10.0)
         drawLine(ctx: ctx, points: smoothedPoints)
-
+        
+        
+        let f = Float(0.5 + 0.5 * sin(timef * .pi))
+        let pt = getPointAtPct(pct: f, points: smoothedPoints)
+        ctx.setFillColor(UIColor.white.cgColor)
+        ctx.addEllipse(in: CGRect(x: pt.x-10, y: pt.y-10, width: 20, height: 20))
+        ctx.fillPath()
+        
+    }
+    
+    deinit {
+        displayLink?.invalidate()
+        displayLink = nil
     }
 }
