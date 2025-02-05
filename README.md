@@ -5,11 +5,11 @@
 ## Features 🚀
 
 -   **Interpolation Methods:** 🏗️
-    -   Cubic, Hermite, Bezier, Catmull-Rom
+    Cubic, Hermite, Bezier, Catmull-Rom
 
 ## Demo 🎥
 
-![SmoothPoints Demo](your-gif-url.gif)
+![SmoothPoints Demo](https://github.com/vanderlin/Swift-SmoothPoints/blob/main/spline.gif?raw=true)
 
 ## Usage 🛠️
 
