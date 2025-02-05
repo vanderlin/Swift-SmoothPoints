@@ -10,7 +10,7 @@
 ## Demo 🎥
 
 <p align="center">
-![SmoothPoints Demo](https://github.com/vanderlin/Swift-SmoothPoints/blob/main/spline.gif?raw=true)
+<img src="https://github.com/vanderlin/Swift-SmoothPoints/blob/main/spline.gif?raw=true"/>
 </p>
 
 ## Usage 🛠️
